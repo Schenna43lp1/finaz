@@ -4,13 +4,15 @@ Finanzverwaltungstool - Web Application
 Flask-based web frontend for financial management
 """
 
+import os
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from datetime import date, datetime, timedelta
 from database import Database
 from models import Account, Category, Transaction, Budget
 
 app = Flask(__name__)
-app.secret_key = 'finaz-secret-key-change-in-production'  # TODO: Move to environment variable
+# Use environment variable for secret key in production, fallback for development
+app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 
 # Initialize database and models
 db = Database()
@@ -281,4 +283,7 @@ def api_categories(transaction_type):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Debug mode should only be enabled for development
+    # For production, use a WSGI server like gunicorn or uwsgi
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() in ('true', '1', 'yes')
+    app.run(debug=debug_mode, host='0.0.0.0', port=5000)
