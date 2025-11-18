@@ -1,22 +1,27 @@
 # Finanzverwaltungstool mit MariaDB Backend
 
-Ein umfassendes Finanzverwaltungstool (Financial Management Tool) mit MariaDB als Backend-Datenbank. Dieses Tool ermöglicht die Verwaltung von Konten, Transaktionen, Kategorien und Budgets über eine benutzerfreundliche Kommandozeilenschnittstelle.
+Ein umfassendes Finanzverwaltungstool (Financial Management Tool) mit MariaDB als Backend-Datenbank. Dieses Tool ermöglicht die Verwaltung von Konten, Transaktionen, Kategorien und Budgets über eine benutzerfreundliche **Web-Oberfläche** oder **Kommandozeilenschnittstelle**.
 
 ## Funktionen
 
+- ✓ **Web-Frontend**: Moderne, responsive Web-Oberfläche mit Flask
+- ✓ **CLI-Interface**: Traditionelle Kommandozeilenschnittstelle (weiterhin verfügbar)
 - ✓ **Kontenverwaltung**: Erstellen und verwalten Sie verschiedene Konten (Girokonto, Sparkonto, Kreditkarte, Bargeld)
 - ✓ **Transaktionsverwaltung**: Erfassen Sie Einnahmen und Ausgaben mit automatischer Saldo-Aktualisierung
 - ✓ **Kategorisierung**: Organisieren Sie Transaktionen in vordefinierte oder benutzerdefinierte Kategorien
 - ✓ **Budget-Tracking**: Erstellen und überwachen Sie Budgets für verschiedene Ausgabenkategorien
 - ✓ **Finanzberichte**: Zeigen Sie monatliche Reports und Finanzübersichten an
 - ✓ **Multi-Currency Support**: Unterstützung für verschiedene Währungen (Standard: EUR)
+- ✓ **Dashboard**: Übersichtliche Darstellung aller wichtigen Finanzdaten
 
 ## Technologie-Stack
 
 - **Backend-Datenbank**: MariaDB
 - **Programmiersprache**: Python 3
+- **Web-Framework**: Flask 3.0
 - **Datenbank-Connector**: mysql-connector-python
 - **CLI-Interface**: tabulate für formatierte Ausgaben
+- **Frontend**: HTML5, CSS3, JavaScript
 
 ## Voraussetzungen
 
@@ -90,13 +95,35 @@ DB_NAME=finaz_db
 
 ## Verwendung
 
-Starten Sie das Finanzverwaltungstool:
+### Option 1: Web-Frontend (empfohlen)
+
+Starten Sie den Web-Server:
+
+```bash
+python app.py
+```
+
+Öffnen Sie dann Ihren Browser und navigieren Sie zu: **http://localhost:5000**
+
+Das Web-Frontend bietet:
+- 📊 **Dashboard** mit Übersicht aller Konten und aktuellen Monatsdaten
+- 🏦 **Kontenverwaltung** - Konten erstellen, anzeigen und löschen
+- 💳 **Transaktionen** - Einnahmen und Ausgaben erfassen und filtern
+- 🏷️ **Kategorien** - Übersicht aller Kategorien
+- 💰 **Budgets** - Budget erstellen und verwalten
+- 📈 **Berichte** - Monatliche Finanzberichte mit Filterung
+
+> **Hinweis**: Für detaillierte Informationen zum Web-Frontend siehe [WEB_FRONTEND_README.md](WEB_FRONTEND_README.md)
+
+### Option 2: CLI (Kommandozeile)
+
+Starten Sie die CLI-Version:
 
 ```bash
 python finaz.py
 ```
 
-### Hauptmenü
+### CLI-Hauptmenü
 
 Nach dem Start sehen Sie das Hauptmenü:
 
@@ -115,12 +142,19 @@ Nach dem Start sehen Sie das Hauptmenü:
 ============================================================
 ```
 
-### Beispiel-Workflow
+### Beispiel-Workflow (CLI)
 
 1. **Konto erstellen**: Wählen Sie Option 1 → 2, um ein neues Konto zu erstellen
 2. **Transaktion hinzufügen**: Wählen Sie Option 2, um Einnahmen oder Ausgaben zu erfassen
 3. **Übersicht anzeigen**: Wählen Sie Option 6, um Ihre aktuelle Finanzsituation zu sehen
 4. **Monatsreport**: Wählen Sie Option 7, um einen detaillierten Monatsbericht zu erstellen
+
+### Beispiel-Workflow (Web)
+
+1. Öffnen Sie **Dashboard** für eine Übersicht
+2. Klicken Sie auf **"+ Neues Konto"** um ein Konto zu erstellen
+3. Nutzen Sie **"+ Neue Transaktion"** um Einnahmen/Ausgaben zu erfassen
+4. Besuchen Sie **Berichte** für monatliche Finanzauswertungen
 
 ## Datenbank-Schema
 
@@ -151,14 +185,28 @@ Nach dem Start sehen Sie das Hauptmenü:
 
 ```
 finaz/
-├── finaz.py              # Hauptanwendung (CLI)
-├── database.py           # Datenbankverbindung und -operationen
-├── models.py             # Datenmodelle (Account, Transaction, Category, Budget)
-├── database_schema.sql   # SQL-Schema für MariaDB
-├── requirements.txt      # Python-Abhängigkeiten
-├── .env.example         # Beispiel-Konfigurationsdatei
-├── .gitignore           # Git-Ignore-Regeln
-└── README.md            # Diese Datei
+├── app.py                      # Web-Anwendung (Flask)
+├── finaz.py                    # CLI-Anwendung
+├── database.py                 # Datenbankverbindung und -operationen
+├── models.py                   # Datenmodelle (Account, Transaction, Category, Budget)
+├── database_schema.sql         # SQL-Schema für MariaDB
+├── templates/                  # HTML-Templates für Web-Frontend
+│   ├── base.html              # Basis-Template
+│   ├── index.html             # Dashboard
+│   ├── accounts.html          # Kontenübersicht
+│   ├── transactions.html      # Transaktionsübersicht
+│   ├── categories.html        # Kategorienübersicht
+│   ├── budgets.html          # Budgetübersicht
+│   ├── reports.html          # Berichte
+│   └── ...                    # Weitere Templates
+├── static/                    # Statische Dateien (CSS, JS)
+│   └── css/
+│       └── style.css         # Stylesheet
+├── requirements.txt          # Python-Abhängigkeiten
+├── .env.example             # Beispiel-Konfigurationsdatei
+├── .gitignore               # Git-Ignore-Regeln
+├── README.md                # Diese Datei
+└── WEB_FRONTEND_README.md   # Detaillierte Web-Frontend-Dokumentation
 ```
 
 ## Sicherheitshinweise
@@ -172,12 +220,14 @@ finaz/
 
 Mögliche zukünftige Erweiterungen:
 
-- Web-Interface mit Flask oder Django
-- Grafische Darstellung von Finanzberichten
+- ✅ ~~Web-Interface mit Flask~~ (Implementiert!)
+- Grafische Darstellung von Finanzberichten (Charts/Diagramme)
 - Import/Export von Transaktionen (CSV, Excel)
-- Multi-User-Unterstützung
+- Multi-User-Unterstützung mit Authentifizierung
 - Automatische Backup-Funktionen
 - Mobile App-Integration
+- Dark Mode für Web-Frontend
+- Benachrichtigungen und Alerts
 
 ## Fehlerbehebung
 
