@@ -61,6 +61,31 @@ body {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
+.nav-menu .nav-user {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: 1rem;
+}
+
+.nav-menu .nav-user span {
+    color: white;
+    font-weight: 500;
+}
+
+.nav-menu .btn-logout {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.nav-menu .btn-logout:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
 /* Main Content */
 main {
     flex: 1;
