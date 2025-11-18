@@ -29,7 +29,32 @@ Ein umfassendes Finanzverwaltungstool (Financial Management Tool) mit MariaDB al
 - MariaDB Server 10.3 oder höher
 - pip (Python Package Manager)
 
+**ODER für Docker:**
+- Docker Engine (Version 20.10 oder höher)
+- Docker Compose (Version 2.0 oder höher)
+
 ## Installation
+
+### Option A: Mit Docker (Empfohlen für schnellen Start)
+
+Mit Docker können Sie die Anwendung inklusive Datenbank mit wenigen Befehlen starten:
+
+```bash
+# 1. Umgebungsvariablen konfigurieren
+cp .env.example .env
+
+# 2. Container starten
+docker compose up -d
+
+# 3. Anwendung öffnen
+# Öffnen Sie http://localhost:5000 im Browser
+```
+
+Fertig! Die Anwendung läuft nun mit einer vollständig konfigurierten MariaDB-Datenbank.
+
+> **Hinweis**: Für detaillierte Docker-Anweisungen siehe [DOCKER_README.md](DOCKER_README.md)
+
+### Option B: Manuelle Installation
 
 ### 1. MariaDB Server installieren
 

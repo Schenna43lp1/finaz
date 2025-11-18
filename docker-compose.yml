@@ -1,0 +1,55 @@
+services:
+  # MariaDB Database Service
+  db:
+    image: mariadb:10.11
+    container_name: finaz_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${DB_NAME:-finaz_db}
+      MYSQL_USER: ${DB_USER:-finaz_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-finaz_password}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./database_schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    ports:
+      - "3306:3306"
+    networks:
+      - finaz_network
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Flask Web Application Service
+  web:
+    build: .
+    container_name: finaz_web
+    restart: unless-stopped
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: ${DB_USER:-finaz_user}
+      DB_PASSWORD: ${DB_PASSWORD:-finaz_password}
+      DB_NAME: ${DB_NAME:-finaz_db}
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-key-change-in-production}
+      FLASK_DEBUG: ${FLASK_DEBUG:-False}
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - finaz_network
+    volumes:
+      - ./static:/app/static:ro
+      - ./templates:/app/templates:ro
+
+volumes:
+  mariadb_data:
+    driver: local
+
+networks:
+  finaz_network:
+    driver: bridge
