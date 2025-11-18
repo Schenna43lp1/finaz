@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Kategorien - Finanzverwaltungstool{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>🏷️ Kategorien</h1>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2>Einnahme-Kategorien</h2>
+    </div>
+    {% if income_categories %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Beschreibung</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category in income_categories %}
+                    <tr>
+                        <td>{{ category.id }}</td>
+                        <td><strong>{{ category.name }}</strong></td>
+                        <td>{{ category.description }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>Keine Einnahme-Kategorien vorhanden</p>
+        </div>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2>Ausgabe-Kategorien</h2>
+    </div>
+    {% if expense_categories %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Beschreibung</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category in expense_categories %}
+                    <tr>
+                        <td>{{ category.id }}</td>
+                        <td><strong>{{ category.name }}</strong></td>
+                        <td>{{ category.description }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>Keine Ausgabe-Kategorien vorhanden</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
