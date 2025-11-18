@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Berichte - Finanzverwaltungstool{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>📊 Monatsberichte</h1>
+</div>
+
+<!-- Period Selector -->
+<div class="card">
+    <div class="card-header">
+        <h2>Zeitraum auswählen</h2>
+    </div>
+    <form method="GET" action="{{ url_for('reports') }}">
+        <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 1rem;">
+            <div class="form-group">
+                <label for="year">Jahr</label>
+                <select class="form-control" id="year" name="year">
+                    {% for y in range(2020, 2031) %}
+                    <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="month">Monat</label>
+                <select class="form-control" id="month" name="month">
+                    {% for m in range(1, 13) %}
+                    <option value="{{ m }}" {% if m == month %}selected{% endif %}>
+                        {{ ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 
+                            'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'][m-1] }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>&nbsp;</label>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Anzeigen</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Summary Cards -->
+<div class="dashboard-grid">
+    <div class="stat-card positive">
+        <h3>Einnahmen</h3>
+        <div class="stat-value">+{{ "%.2f"|format(summary.Einnahme) }} EUR</div>
+    </div>
+    
+    <div class="stat-card negative">
+        <h3>Ausgaben</h3>
+        <div class="stat-value">-{{ "%.2f"|format(summary.Ausgabe) }} EUR</div>
+    </div>
+    
+    <div class="stat-card {% if summary.Saldo >= 0 %}positive{% else %}negative{% endif %}">
+        <h3>Saldo</h3>
+        <div class="stat-value">{{ "%.2f"|format(summary.Saldo) }} EUR</div>
+    </div>
+</div>
+
+<!-- Transaction Details -->
+<div class="card">
+    <div class="card-header">
+        <h2>Transaktionen vom {{ start_date }} bis {{ end_date }}</h2>
+    </div>
+    {% if transactions %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Datum</th>
+                        <th>Konto</th>
+                        <th>Kategorie</th>
+                        <th>Typ</th>
+                        <th>Betrag</th>
+                        <th>Beschreibung</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in transactions %}
+                    <tr>
+                        <td>{{ transaction.transaction_date }}</td>
+                        <td>{{ transaction.account_name }}</td>
+                        <td>{{ transaction.category_name }}</td>
+                        <td>
+                            <span class="badge {% if transaction.transaction_type == 'Einnahme' %}badge-income{% else %}badge-expense{% endif %}">
+                                {{ transaction.transaction_type }}
+                            </span>
+                        </td>
+                        <td class="{% if transaction.transaction_type == 'Einnahme' %}text-success{% else %}text-danger{% endif %}">
+                            <strong>
+                                {% if transaction.transaction_type == 'Einnahme' %}+{% else %}-{% endif %}
+                                {{ "%.2f"|format(transaction.amount) }} EUR
+                            </strong>
+                        </td>
+                        <td>{{ transaction.description or '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">📋</div>
+            <p>Keine Transaktionen für diesen Zeitraum</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

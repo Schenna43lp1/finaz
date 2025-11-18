@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Konten - Finanzverwaltungstool{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>🏦 Kontenverwaltung</h1>
+    <a href="{{ url_for('create_account') }}" class="btn btn-primary">+ Neues Konto</a>
+</div>
+
+<div class="card">
+    {% if accounts %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Typ</th>
+                        <th>Saldo</th>
+                        <th>Beschreibung</th>
+                        <th>Aktionen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for account in accounts %}
+                    <tr>
+                        <td>{{ account.id }}</td>
+                        <td><strong>{{ account.name }}</strong></td>
+                        <td><span class="badge badge-primary">{{ account.account_type }}</span></td>
+                        <td class="{% if account.balance >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            <strong>{{ "%.2f"|format(account.balance) }} {{ account.currency }}</strong>
+                        </td>
+                        <td>{{ account.description or '-' }}</td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <a href="{{ url_for('transactions', account_id=account.id) }}" class="btn btn-sm btn-secondary">Transaktionen</a>
+                                <form method="POST" action="{{ url_for('delete_account', account_id=account.id) }}" 
+                                      onsubmit="return confirm('Konto wirklich löschen?');">
+                                    <button type="submit" class="btn btn-sm btn-danger">Löschen</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">🏦</div>
+            <p>Keine Konten vorhanden</p>
+            <a href="{{ url_for('create_account') }}" class="btn btn-primary mt-2">Erstes Konto erstellen</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

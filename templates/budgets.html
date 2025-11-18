@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Budgets - Finanzverwaltungstool{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>💰 Budgetverwaltung</h1>
+    <a href="{{ url_for('create_budget') }}" class="btn btn-primary">+ Neues Budget</a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2>Aktive Budgets</h2>
+    </div>
+    {% if budgets %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Kategorie</th>
+                        <th>Budget-Betrag</th>
+                        <th>Zeitraum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for budget in budgets %}
+                    <tr>
+                        <td>{{ budget.id }}</td>
+                        <td><strong>{{ budget.category_name }}</strong></td>
+                        <td class="text-success"><strong>{{ "%.2f"|format(budget.amount) }} EUR</strong></td>
+                        <td>{{ budget.period_start }} bis {{ budget.period_end }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">💰</div>
+            <p>Keine aktiven Budgets vorhanden</p>
+            <a href="{{ url_for('create_budget') }}" class="btn btn-primary mt-2">Erstes Budget erstellen</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
