@@ -48,6 +48,20 @@ def login_required(f):
     return decorated_function
 
 
+def admin_required(f):
+    """Decorator to require admin privileges for routes"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash('Bitte melden Sie sich an, um auf diese Seite zuzugreifen', 'error')
+            return redirect(url_for('login'))
+        if not session.get('is_admin', False):
+            flash('Zugriff verweigert. Administratorrechte erforderlich.', 'error')
+            return redirect(url_for('index'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """Login page"""
@@ -63,6 +77,7 @@ def login():
             user = user_model.get_by_username(username)
             session['user_id'] = user['id']
             session['username'] = user['username']
+            session['is_admin'] = user.get('is_admin', False)
             flash(f'Willkommen zurück, {username}!', 'success')
             return redirect(url_for('index'))
         else:
@@ -72,17 +87,19 @@ def login():
 
 
 @app.route('/register', methods=['GET', 'POST'])
+@admin_required
 def register():
-    """Registration page"""
+    """Admin-only user registration page"""
     if request.method == 'POST':
         if not init_models():
             flash('Fehler bei der Datenbankverbindung', 'error')
-            return redirect(url_for('register'))
+            return redirect(url_for('users'))
         
         username = request.form.get('username')
         password = request.form.get('password')
         password_confirm = request.form.get('password_confirm')
         email = request.form.get('email', '')
+        is_admin = request.form.get('is_admin') == 'on'
         
         # Validate input
         if not username or not password:
@@ -103,12 +120,12 @@ def register():
             return redirect(url_for('register'))
         
         # Create user
-        user_id = user_model.create(username, password, email)
+        user_id = user_model.create(username, password, email, is_admin)
         if user_id:
-            flash('Registrierung erfolgreich! Bitte melden Sie sich an.', 'success')
-            return redirect(url_for('login'))
+            flash(f'Benutzer "{username}" erfolgreich erstellt', 'success')
+            return redirect(url_for('users'))
         else:
-            flash('Fehler bei der Registrierung', 'error')
+            flash('Fehler beim Erstellen des Benutzers', 'error')
     
     return render_template('register.html')
 
@@ -118,6 +135,7 @@ def logout():
     """Logout user"""
     session.pop('user_id', None)
     session.pop('username', None)
+    session.pop('is_admin', None)
     flash('Sie wurden erfolgreich abgemeldet', 'success')
     return redirect(url_for('login'))
 
@@ -379,6 +397,18 @@ def api_categories(transaction_type):
     
     categories = category_model.get_by_type(transaction_type)
     return jsonify(categories)
+
+
+@app.route('/users')
+@admin_required
+def users():
+    """User management page (admin only)"""
+    if not init_models():
+        flash('Fehler bei der Datenbankverbindung', 'error')
+        return redirect(url_for('index'))
+    
+    all_users = user_model.get_all()
+    return render_template('users.html', users=all_users)
 
 
 if __name__ == '__main__':
