@@ -21,6 +21,9 @@
                 <li><a href="{{ url_for('categories') }}" class="{% if request.endpoint == 'categories' %}active{% endif %}">Kategorien</a></li>
                 <li><a href="{{ url_for('budgets') }}" class="{% if request.endpoint in ['budgets', 'create_budget'] %}active{% endif %}">Budgets</a></li>
                 <li><a href="{{ url_for('reports') }}" class="{% if request.endpoint == 'reports' %}active{% endif %}">Berichte</a></li>
+                {% if session.get('is_admin') %}
+                <li><a href="{{ url_for('users') }}" class="{% if request.endpoint in ['users', 'register'] %}active{% endif %}">Benutzer</a></li>
+                {% endif %}
                 <li class="nav-user">
                     <span>👤 {{ session.get('username') }}</span>
                     <a href="{{ url_for('logout') }}" class="btn-logout">Abmelden</a>

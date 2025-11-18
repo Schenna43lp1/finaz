@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Benutzerverwaltung - Finanzverwaltungstool{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>👥 Benutzerverwaltung</h1>
+    <a href="{{ url_for('register') }}" class="btn btn-primary">➕ Neuer Benutzer</a>
+</div>
+
+<div class="content-section">
+    {% if users %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Benutzername</th>
+                    <th>E-Mail</th>
+                    <th>Administrator</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email or '-' }}</td>
+                    <td>
+                        {% if user.is_admin %}
+                            <span class="badge badge-admin">✓ Admin</span>
+                        {% else %}
+                            <span class="badge badge-user">Benutzer</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="empty-state">
+            <p>Keine Benutzer vorhanden.</p>
+            <a href="{{ url_for('register') }}" class="btn btn-primary">Ersten Benutzer erstellen</a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.content-section {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead {
+    background: #f8f9fa;
+}
+
+.data-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #2c3e50;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.data-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.data-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.badge-admin {
+    background: #d4edda;
+    color: #155724;
+}
+
+.badge-user {
+    background: #e7f3ff;
+    color: #004085;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #7f8c8d;
+}
+
+.empty-state p {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+}
+</style>
+{% endblock %}

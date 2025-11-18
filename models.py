@@ -15,7 +15,7 @@ class User:
     def __init__(self, db: Database):
         self.db = db
     
-    def create(self, username: str, password: str, email: str = '') -> Optional[int]:
+    def create(self, username: str, password: str, email: str = '', is_admin: bool = False) -> Optional[int]:
         """
         Create a new user
         
@@ -23,29 +23,31 @@ class User:
             username: Username for login
             password: Plain text password (will be hashed)
             email: Optional email address
+            is_admin: Whether the user is an admin
             
         Returns:
             User ID if successful, None otherwise
         """
         password_hash = generate_password_hash(password)
         query = """
-            INSERT INTO users (username, password_hash, email)
-            VALUES (%s, %s, %s)
+            INSERT INTO users (username, password_hash, email, is_admin)
+            VALUES (%s, %s, %s, %s)
         """
-        if self.db.execute_query(query, (username, password_hash, email)):
+        if self.db.execute_query(query, (username, password_hash, email, is_admin)):
             return self.db.get_last_insert_id()
         return None
     
     def get_by_username(self, username: str) -> Optional[Dict[str, Any]]:
         """Get user by username"""
-        query = "SELECT id, username, password_hash, email FROM users WHERE username = %s"
+        query = "SELECT id, username, password_hash, email, is_admin FROM users WHERE username = %s"
         result = self.db.fetch_one(query, (username,))
         if result:
             return {
                 'id': result[0],
                 'username': result[1],
                 'password_hash': result[2],
-                'email': result[3]
+                'email': result[3],
+                'is_admin': bool(result[4])
             }
         return None
     
@@ -58,15 +60,32 @@ class User:
     
     def get_by_id(self, user_id: int) -> Optional[Dict[str, Any]]:
         """Get user by ID"""
-        query = "SELECT id, username, email FROM users WHERE id = %s"
+        query = "SELECT id, username, email, is_admin FROM users WHERE id = %s"
         result = self.db.fetch_one(query, (user_id,))
         if result:
             return {
                 'id': result[0],
                 'username': result[1],
-                'email': result[2]
+                'email': result[2],
+                'is_admin': bool(result[3])
             }
         return None
+    
+    def get_all(self) -> List[Dict[str, Any]]:
+        """Get all users"""
+        query = "SELECT id, username, email, is_admin FROM users ORDER BY username"
+        results = self.db.fetch_query(query)
+        if results:
+            return [
+                {
+                    'id': row[0],
+                    'username': row[1],
+                    'email': row[2],
+                    'is_admin': bool(row[3])
+                }
+                for row in results
+            ]
+        return []
 
 
 class Account:
