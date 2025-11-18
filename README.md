@@ -4,6 +4,7 @@ Ein umfassendes Finanzverwaltungstool (Financial Management Tool) mit MariaDB al
 
 ## Funktionen
 
+- ✓ **Benutzerauthentifizierung**: Sicherer Login mit Benutzerverwaltung und Passwort-Hashing
 - ✓ **Web-Frontend**: Moderne, responsive Web-Oberfläche mit Flask
 - ✓ **CLI-Interface**: Traditionelle Kommandozeilenschnittstelle (weiterhin verfügbar)
 - ✓ **Kontenverwaltung**: Erstellen und verwalten Sie verschiedene Konten (Girokonto, Sparkonto, Kreditkarte, Bargeld)
@@ -176,15 +177,20 @@ Nach dem Start sehen Sie das Hauptmenü:
 
 ### Beispiel-Workflow (Web)
 
-1. Öffnen Sie **Dashboard** für eine Übersicht
-2. Klicken Sie auf **"+ Neues Konto"** um ein Konto zu erstellen
-3. Nutzen Sie **"+ Neue Transaktion"** um Einnahmen/Ausgaben zu erfassen
-4. Besuchen Sie **Berichte** für monatliche Finanzauswertungen
+1. **Registrieren** Sie sich beim ersten Besuch unter `/register`
+2. **Melden Sie sich an** mit Ihrem Benutzernamen und Passwort
+3. Öffnen Sie **Dashboard** für eine Übersicht
+4. Klicken Sie auf **"+ Neues Konto"** um ein Konto zu erstellen
+5. Nutzen Sie **"+ Neue Transaktion"** um Einnahmen/Ausgaben zu erfassen
+6. Besuchen Sie **Berichte** für monatliche Finanzauswertungen
+
+> **Hinweis**: Für detaillierte Informationen zum Login-System siehe [LOGIN_README.md](LOGIN_README.md)
 
 ## Datenbank-Schema
 
 ### Tabellen
 
+- **users**: Speichert Benutzerkonten mit sicheren Passwort-Hashes
 - **accounts**: Speichert Kontoinformationen (Name, Typ, Saldo, Währung)
 - **categories**: Definiert Kategorien für Einnahmen und Ausgaben
 - **transactions**: Erfasst alle finanziellen Transaktionen
@@ -246,9 +252,11 @@ finaz/
 Mögliche zukünftige Erweiterungen:
 
 - ✅ ~~Web-Interface mit Flask~~ (Implementiert!)
+- ✅ ~~Benutzerauthentifizierung~~ (Implementiert!)
 - Grafische Darstellung von Finanzberichten (Charts/Diagramme)
 - Import/Export von Transaktionen (CSV, Excel)
-- Multi-User-Unterstützung mit Authentifizierung
+- Multi-User-Unterstützung mit Benutzerspezifischen Daten
+- Passwort-Reset-Funktion
 - Automatische Backup-Funktionen
 - Mobile App-Integration
 - Dark Mode für Web-Frontend

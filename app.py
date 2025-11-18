@@ -5,10 +5,11 @@ Flask-based web frontend for financial management
 """
 
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from functools import wraps
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from datetime import date, datetime, timedelta
 from database import Database
-from models import Account, Category, Transaction, Budget
+from models import Account, Category, Transaction, Budget, User
 
 app = Flask(__name__)
 # Use environment variable for secret key in production, fallback for development
@@ -20,21 +21,109 @@ account_model = None
 category_model = None
 transaction_model = None
 budget_model = None
+user_model = None
 
 
 def init_models():
     """Initialize database models"""
-    global account_model, category_model, transaction_model, budget_model
+    global account_model, category_model, transaction_model, budget_model, user_model
     if db.connect():
         account_model = Account(db)
         category_model = Category(db)
         transaction_model = Transaction(db)
         budget_model = Budget(db)
+        user_model = User(db)
         return True
     return False
 
 
+def login_required(f):
+    """Decorator to require login for routes"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash('Bitte melden Sie sich an, um auf diese Seite zuzugreifen', 'error')
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """Login page"""
+    if request.method == 'POST':
+        if not init_models():
+            flash('Fehler bei der Datenbankverbindung', 'error')
+            return redirect(url_for('login'))
+        
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        if user_model.verify_password(username, password):
+            user = user_model.get_by_username(username)
+            session['user_id'] = user['id']
+            session['username'] = user['username']
+            flash(f'Willkommen zurück, {username}!', 'success')
+            return redirect(url_for('index'))
+        else:
+            flash('Ungültiger Benutzername oder Passwort', 'error')
+    
+    return render_template('login.html')
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    """Registration page"""
+    if request.method == 'POST':
+        if not init_models():
+            flash('Fehler bei der Datenbankverbindung', 'error')
+            return redirect(url_for('register'))
+        
+        username = request.form.get('username')
+        password = request.form.get('password')
+        password_confirm = request.form.get('password_confirm')
+        email = request.form.get('email', '')
+        
+        # Validate input
+        if not username or not password:
+            flash('Benutzername und Passwort sind erforderlich', 'error')
+            return redirect(url_for('register'))
+        
+        if password != password_confirm:
+            flash('Passwörter stimmen nicht überein', 'error')
+            return redirect(url_for('register'))
+        
+        if len(password) < 6:
+            flash('Passwort muss mindestens 6 Zeichen lang sein', 'error')
+            return redirect(url_for('register'))
+        
+        # Check if username already exists
+        if user_model.get_by_username(username):
+            flash('Benutzername existiert bereits', 'error')
+            return redirect(url_for('register'))
+        
+        # Create user
+        user_id = user_model.create(username, password, email)
+        if user_id:
+            flash('Registrierung erfolgreich! Bitte melden Sie sich an.', 'success')
+            return redirect(url_for('login'))
+        else:
+            flash('Fehler bei der Registrierung', 'error')
+    
+    return render_template('register.html')
+
+
+@app.route('/logout')
+def logout():
+    """Logout user"""
+    session.pop('user_id', None)
+    session.pop('username', None)
+    flash('Sie wurden erfolgreich abgemeldet', 'success')
+    return redirect(url_for('login'))
+
+
 @app.route('/')
+@login_required
 def index():
     """Dashboard/Overview page"""
     if not init_models():
@@ -62,6 +151,7 @@ def index():
 
 
 @app.route('/accounts')
+@login_required
 def accounts():
     """Account management page"""
     if not init_models():
@@ -73,6 +163,7 @@ def accounts():
 
 
 @app.route('/accounts/create', methods=['GET', 'POST'])
+@login_required
 def create_account():
     """Create new account"""
     if request.method == 'POST':
@@ -98,6 +189,7 @@ def create_account():
 
 
 @app.route('/accounts/delete/<int:account_id>', methods=['POST'])
+@login_required
 def delete_account(account_id):
     """Delete an account"""
     if not init_models():
@@ -113,6 +205,7 @@ def delete_account(account_id):
 
 
 @app.route('/transactions')
+@login_required
 def transactions():
     """Transaction list page"""
     if not init_models():
@@ -135,6 +228,7 @@ def transactions():
 
 
 @app.route('/transactions/create', methods=['GET', 'POST'])
+@login_required
 def create_transaction():
     """Create new transaction"""
     if not init_models():
@@ -176,6 +270,7 @@ def create_transaction():
 
 
 @app.route('/categories')
+@login_required
 def categories():
     """Categories page"""
     if not init_models():
@@ -194,6 +289,7 @@ def categories():
 
 
 @app.route('/budgets')
+@login_required
 def budgets():
     """Budget management page"""
     if not init_models():
@@ -206,6 +302,7 @@ def budgets():
 
 
 @app.route('/budgets/create', methods=['GET', 'POST'])
+@login_required
 def create_budget():
     """Create new budget"""
     if not init_models():
@@ -236,6 +333,7 @@ def create_budget():
 
 
 @app.route('/reports')
+@login_required
 def reports():
     """Monthly reports page"""
     if not init_models():
@@ -273,6 +371,7 @@ def reports():
 
 
 @app.route('/api/categories/<transaction_type>')
+@login_required
 def api_categories(transaction_type):
     """API endpoint to get categories by type"""
     if not init_models():
