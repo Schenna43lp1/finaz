@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="page-header">
-    <h1>📊 Dashboard</h1>
+    <h1>Dashboard</h1>
 </div>
 
 <!-- Summary Cards -->
@@ -13,17 +13,17 @@
         <h3>Gesamtsaldo</h3>
         <div class="stat-value">{{ "%.2f"|format(total_balance) }} EUR</div>
     </div>
-    
+
     <div class="stat-card positive">
         <h3>{{ current_month }} - Einnahmen</h3>
         <div class="stat-value">+{{ "%.2f"|format(summary.Einnahme) }} EUR</div>
     </div>
-    
+
     <div class="stat-card negative">
         <h3>{{ current_month }} - Ausgaben</h3>
         <div class="stat-value">-{{ "%.2f"|format(summary.Ausgabe) }} EUR</div>
     </div>
-    
+
     <div class="stat-card {% if summary.Saldo >= 0 %}positive{% else %}negative{% endif %}">
         <h3>{{ current_month }} - Saldo</h3>
         <div class="stat-value">{{ "%.2f"|format(summary.Saldo) }} EUR</div>
@@ -36,38 +36,39 @@
         <h2>Kontenübersicht</h2>
     </div>
     {% if accounts %}
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Konto</th>
-                        <th>Typ</th>
-                        <th>Saldo</th>
-                        <th>Aktionen</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for account in accounts %}
-                    <tr>
-                        <td><strong>{{ account.name }}</strong></td>
-                        <td><span class="badge badge-primary">{{ account.account_type }}</span></td>
-                        <td class="{% if account.balance >= 0 %}text-success{% else %}text-danger{% endif %}">
-                            <strong>{{ "%.2f"|format(account.balance) }} {{ account.currency }}</strong>
-                        </td>
-                        <td>
-                            <a href="{{ url_for('transactions', account_id=account.id) }}" class="btn btn-sm btn-secondary">Transaktionen</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Konto</th>
+                    <th>Typ</th>
+                    <th>Saldo</th>
+                    <th>Aktionen</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for account in accounts %}
+                <tr>
+                    <td><strong>{{ account.name }}</strong></td>
+                    <td><span class="badge badge-primary">{{ account.account_type }}</span></td>
+                    <td class="{% if account.balance >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        <strong>{{ "%.2f"|format(account.balance) }} {{ account.currency }}</strong>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('transactions', account_id=account.id) }}"
+                            class="btn btn-sm btn-secondary">Transaktionen</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
-        <div class="empty-state">
-            <div class="empty-state-icon">🏦</div>
-            <p>Keine Konten vorhanden</p>
-            <a href="{{ url_for('create_account') }}" class="btn btn-primary mt-2">Erstes Konto erstellen</a>
-        </div>
+    <div class="empty-state">
+        <div class="empty-state-icon">🏦</div>
+        <p>Keine Konten vorhanden</p>
+        <a href="{{ url_for('create_account') }}" class="btn btn-primary mt-2">Erstes Konto erstellen</a>
+    </div>
     {% endif %}
 </div>
 
@@ -77,47 +78,49 @@
         <h2>Letzte Transaktionen</h2>
     </div>
     {% if recent_transactions %}
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Datum</th>
-                        <th>Konto</th>
-                        <th>Kategorie</th>
-                        <th>Typ</th>
-                        <th>Betrag</th>
-                        <th>Beschreibung</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for transaction in recent_transactions %}
-                    <tr>
-                        <td>{{ transaction.transaction_date }}</td>
-                        <td>{{ transaction.account_name }}</td>
-                        <td>{{ transaction.category_name }}</td>
-                        <td>
-                            <span class="badge {% if transaction.transaction_type == 'Einnahme' %}badge-income{% else %}badge-expense{% endif %}">
-                                {{ transaction.transaction_type }}
-                            </span>
-                        </td>
-                        <td class="{% if transaction.transaction_type == 'Einnahme' %}text-success{% else %}text-danger{% endif %}">
-                            <strong>{{ "%.2f"|format(transaction.amount) }} EUR</strong>
-                        </td>
-                        <td>{{ transaction.description or '-' }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <div class="action-buttons">
-            <a href="{{ url_for('transactions') }}" class="btn btn-secondary">Alle Transaktionen anzeigen</a>
-        </div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Datum</th>
+                    <th>Konto</th>
+                    <th>Kategorie</th>
+                    <th>Typ</th>
+                    <th>Betrag</th>
+                    <th>Beschreibung</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in recent_transactions %}
+                <tr>
+                    <td>{{ transaction.transaction_date }}</td>
+                    <td>{{ transaction.account_name }}</td>
+                    <td>{{ transaction.category_name }}</td>
+                    <td>
+                        <span
+                            class="badge {% if transaction.transaction_type == 'Einnahme' %}badge-income{% else %}badge-expense{% endif %}">
+                            {{ transaction.transaction_type }}
+                        </span>
+                    </td>
+                    <td
+                        class="{% if transaction.transaction_type == 'Einnahme' %}text-success{% else %}text-danger{% endif %}">
+                        <strong>{{ "%.2f"|format(transaction.amount) }} EUR</strong>
+                    </td>
+                    <td>{{ transaction.description or '-' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="action-buttons">
+        <a href="{{ url_for('transactions') }}" class="btn btn-secondary">Alle Transaktionen anzeigen</a>
+    </div>
     {% else %}
-        <div class="empty-state">
-            <div class="empty-state-icon">📋</div>
-            <p>Noch keine Transaktionen vorhanden</p>
-            <a href="{{ url_for('create_transaction') }}" class="btn btn-primary mt-2">Erste Transaktion hinzufügen</a>
-        </div>
+    <div class="empty-state">
+        <div class="empty-state-icon">📋</div>
+        <p>Noch keine Transaktionen vorhanden</p>
+        <a href="{{ url_for('create_transaction') }}" class="btn btn-primary mt-2">Erste Transaktion hinzufügen</a>
+    </div>
     {% endif %}
 </div>
 {% endblock %}

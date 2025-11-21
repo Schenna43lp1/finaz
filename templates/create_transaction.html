@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="page-header">
-    <h1>➕ Neue Transaktion hinzufügen</h1>
+    <h1>Neue Transaktion hinzufügen</h1>
 </div>
 
 <div class="card" style="max-width: 600px; margin: 0 auto;">
@@ -23,7 +23,8 @@
 
         <div class="form-group">
             <label for="transaction_type">Transaktionstyp *</label>
-            <select class="form-control" id="transaction_type" name="transaction_type" required onchange="updateCategories()">
+            <select class="form-control" id="transaction_type" name="transaction_type" required
+                onchange="updateCategories()">
                 <option value="">-- Typ auswählen --</option>
                 <option value="Einnahme">Einnahme</option>
                 <option value="Ausgabe">Ausgabe</option>
@@ -44,14 +45,13 @@
 
         <div class="form-group">
             <label for="amount">Betrag *</label>
-            <input type="number" class="form-control" id="amount" name="amount" 
-                   step="0.01" min="0.01" required>
+            <input type="number" class="form-control" id="amount" name="amount" step="0.01" min="0.01" required>
         </div>
 
         <div class="form-group">
             <label for="transaction_date">Datum *</label>
-            <input type="date" class="form-control" id="transaction_date" name="transaction_date" 
-                   value="{{ today }}" required>
+            <input type="date" class="form-control" id="transaction_date" name="transaction_date" value="{{ today }}"
+                required>
         </div>
 
         <div class="form-group">
@@ -67,42 +67,42 @@
 </div>
 
 <script>
-function updateCategories() {
-    const transactionType = document.getElementById('transaction_type').value;
-    const categorySelect = document.getElementById('category_id');
-    const options = categorySelect.querySelectorAll('option');
-    
-    // Reset and disable category select if no type selected
-    if (!transactionType) {
-        categorySelect.value = '';
-        categorySelect.disabled = true;
-        options.forEach(option => {
-            if (option.value) option.style.display = 'none';
-        });
-        options[0].textContent = '-- Zuerst Typ auswählen --';
-        return;
-    }
-    
-    // Enable and filter categories
-    categorySelect.disabled = false;
-    categorySelect.value = '';
-    options[0].textContent = '-- Kategorie auswählen --';
-    
-    options.forEach(option => {
-        if (option.value) {
-            const optionType = option.getAttribute('data-type');
-            if (optionType === transactionType) {
-                option.style.display = '';
-            } else {
-                option.style.display = 'none';
-            }
-        }
-    });
-}
+    function updateCategories() {
+        const transactionType = document.getElementById('transaction_type').value;
+        const categorySelect = document.getElementById('category_id');
+        const options = categorySelect.querySelectorAll('option');
 
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-    updateCategories();
-});
+        // Reset and disable category select if no type selected
+        if (!transactionType) {
+            categorySelect.value = '';
+            categorySelect.disabled = true;
+            options.forEach(option => {
+                if (option.value) option.style.display = 'none';
+            });
+            options[0].textContent = '-- Zuerst Typ auswählen --';
+            return;
+        }
+
+        // Enable and filter categories
+        categorySelect.disabled = false;
+        categorySelect.value = '';
+        options[0].textContent = '-- Kategorie auswählen --';
+
+        options.forEach(option => {
+            if (option.value) {
+                const optionType = option.getAttribute('data-type');
+                if (optionType === transactionType) {
+                    option.style.display = '';
+                } else {
+                    option.style.display = 'none';
+                }
+            }
+        });
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        updateCategories();
+    });
 </script>
 {% endblock %}

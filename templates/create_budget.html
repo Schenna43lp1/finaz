@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="page-header">
-    <h1>➕ Neues Budget erstellen</h1>
+    <h1>Neues Budget erstellen</h1>
 </div>
 
 <div class="card" style="max-width: 600px; margin: 0 auto;">
@@ -23,14 +23,12 @@
 
         <div class="form-group">
             <label for="amount">Budget-Betrag *</label>
-            <input type="number" class="form-control" id="amount" name="amount" 
-                   step="0.01" min="0.01" required>
+            <input type="number" class="form-control" id="amount" name="amount" step="0.01" min="0.01" required>
         </div>
 
         <div class="form-group">
             <label for="period_start">Startdatum *</label>
-            <input type="date" class="form-control" id="period_start" name="period_start" 
-                   value="{{ today }}" required>
+            <input type="date" class="form-control" id="period_start" name="period_start" value="{{ today }}" required>
         </div>
 
         <div class="form-group">
@@ -46,15 +44,15 @@
 </div>
 
 <script>
-// Set end date to end of current month by default
-document.addEventListener('DOMContentLoaded', function() {
-    const periodEnd = document.getElementById('period_end');
-    if (!periodEnd.value) {
-        const today = new Date();
-        const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-        const dateStr = lastDay.toISOString().split('T')[0];
-        periodEnd.value = dateStr;
-    }
-});
+    // Set end date to end of current month by default
+    document.addEventListener('DOMContentLoaded', function () {
+        const periodEnd = document.getElementById('period_end');
+        if (!periodEnd.value) {
+            const today = new Date();
+            const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            const dateStr = lastDay.toISOString().split('T')[0];
+            periodEnd.value = dateStr;
+        }
+    });
 </script>
 {% endblock %}

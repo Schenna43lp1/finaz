@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="page-header">
-    <h1>💳 Transaktionen</h1>
+    <h1>Transaktionen</h1>
     <a href="{{ url_for('create_transaction') }}" class="btn btn-primary">+ Neue Transaktion</a>
 </div>
 
@@ -18,7 +18,7 @@
             <select class="form-control" id="account_id" name="account_id" onchange="this.form.submit()">
                 <option value="">Alle Konten</option>
                 {% for account in accounts %}
-                <option value="{{ account.id }}" {% if selected_account == account.id %}selected{% endif %}>
+                <option value="{{ account.id }}" {% if selected_account==account.id %}selected{% endif %}>
                     {{ account.name }}
                 </option>
                 {% endfor %}
@@ -29,52 +29,54 @@
 
 <div class="card">
     {% if transactions %}
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Datum</th>
-                        <th>Konto</th>
-                        <th>Kategorie</th>
-                        <th>Typ</th>
-                        <th>Betrag</th>
-                        <th>Beschreibung</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for transaction in transactions %}
-                    <tr>
-                        <td>{{ transaction.id }}</td>
-                        <td>{{ transaction.transaction_date }}</td>
-                        <td>{{ transaction.account_name }}</td>
-                        <td>{{ transaction.category_name }}</td>
-                        <td>
-                            <span class="badge {% if transaction.transaction_type == 'Einnahme' %}badge-income{% else %}badge-expense{% endif %}">
-                                {{ transaction.transaction_type }}
-                            </span>
-                        </td>
-                        <td class="{% if transaction.transaction_type == 'Einnahme' %}text-success{% else %}text-danger{% endif %}">
-                            <strong>
-                                {% if transaction.transaction_type == 'Einnahme' %}+{% else %}-{% endif %}
-                                {{ "%.2f"|format(transaction.amount) }} EUR
-                            </strong>
-                        </td>
-                        <td>{{ transaction.description or '-' }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Datum</th>
+                    <th>Konto</th>
+                    <th>Kategorie</th>
+                    <th>Typ</th>
+                    <th>Betrag</th>
+                    <th>Beschreibung</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                <tr>
+                    <td>{{ transaction.id }}</td>
+                    <td>{{ transaction.transaction_date }}</td>
+                    <td>{{ transaction.account_name }}</td>
+                    <td>{{ transaction.category_name }}</td>
+                    <td>
+                        <span
+                            class="badge {% if transaction.transaction_type == 'Einnahme' %}badge-income{% else %}badge-expense{% endif %}">
+                            {{ transaction.transaction_type }}
+                        </span>
+                    </td>
+                    <td
+                        class="{% if transaction.transaction_type == 'Einnahme' %}text-success{% else %}text-danger{% endif %}">
+                        <strong>
+                            {% if transaction.transaction_type == 'Einnahme' %}+{% else %}-{% endif %}
+                            {{ "%.2f"|format(transaction.amount) }} EUR
+                        </strong>
+                    </td>
+                    <td>{{ transaction.description or '-' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
-        <div class="empty-state">
-            <div class="empty-state-icon">📋</div>
-            <p>Keine Transaktionen vorhanden</p>
-            {% if selected_account %}
-                <p><small>Versuchen Sie einen anderen Filter oder fügen Sie eine neue Transaktion hinzu.</small></p>
-            {% endif %}
-            <a href="{{ url_for('create_transaction') }}" class="btn btn-primary mt-2">Erste Transaktion hinzufügen</a>
-        </div>
+    <div class="empty-state">
+        <div class="empty-state-icon">📋</div>
+        <p>Keine Transaktionen vorhanden</p>
+        {% if selected_account %}
+        <p><small>Versuchen Sie einen anderen Filter oder fügen Sie eine neue Transaktion hinzu.</small></p>
+        {% endif %}
+        <a href="{{ url_for('create_transaction') }}" class="btn btn-primary mt-2">Erste Transaktion hinzufügen</a>
+    </div>
     {% endif %}
 </div>
 {% endblock %}

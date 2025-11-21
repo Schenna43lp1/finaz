@@ -2,6 +2,7 @@
 """
 Finanzverwaltungstool - Financial Management Tool
 Main CLI application with MariaDB backend
+Author: Markus Stuefer
 """
 
 import sys
